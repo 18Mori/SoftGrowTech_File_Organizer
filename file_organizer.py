@@ -12,7 +12,6 @@ def organize_files(file_path):
   if not base_path.is_dir():
     logging.error(f'The Path {base_path} is not a valid directory.')
     return
-  # logging.info(f'Scanning: {base_path.name}...')
   
   categories = {
         'Images': {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg'},
@@ -34,16 +33,19 @@ def organize_files(file_path):
       if ext in extentions:
         target_folder = category
         break
+      
     # Secure Dir creation  
     target_dir = base_path / target_folder
     target_dir.mkdir(exist_ok=True)
     
     # move file to target dir
     target_file = target_dir / i.name
+    
     # Avoid overwriting of existing files
     if target_file.exists():
       # rename file by appending a number suffix
-      target_file = target_dir / f'{i.stem}_{count}{i.suffix}'
+      timestamp = int(i.shutil.time.time())
+      target_file = target_dir / f'{i.stem}_{timestamp}{i.suffix}'
       try:
         shutil.move(str(i), str(target_file))
         logging.info(f'Moved: {i.name} >>> {target_folder}/')
@@ -52,6 +54,7 @@ def organize_files(file_path):
         logging.error(f'Failed to move {i.name}: {e}')
         
   print (f'>> Finished! Organised {count} files in {base_path.name} <<')
+  
   
 if __name__ == "__main__":
     print(">>> File Organizer <<<")
